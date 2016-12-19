@@ -76,4 +76,12 @@ class Parkir_Model extends CI_Model {
         $query = $this->db->query("CALL sp_setkeluar('$data')");
         return $query->result();
 	}
+    
+    public function savecost($data)
+	{
+        $this->db->reconnect();
+        $biaya = $data['biaya'];
+        $idtag = $data['idtag'];
+        $query = $this->db->query("CALL sp_savecost('$biaya', '$idtag')");
+	}
 }

@@ -66,7 +66,18 @@ class Parkir extends CI_Controller {
 	{
         $tagihan = $this->hitungtagihan($user);
         
-		$data['title'] = ucfirst("Please Scan Your Card");
+        $biaya      = $tagihan['tagihan'];
+        $hours      = $tagihan['hours'];
+        $minutes    = $tagihan['minutes'];
+        $idtag      = $tagihan['idtag'];        
+        
+		$data['title']      = ucfirst("Thank You");
+        $data['tagihan']    = $biaya;
+        $data['hours']      = $hours;
+        $data['minutes']    = $minutes;
+        $data['idtag']      = $idtag;
+        $data['idpeng']     = $user;
+        
 		$this->load->view('parkir/templates/header', $data);
         $this->load->view('parkir/tagihan');
         $this->load->view('parkir/templates/footer');
@@ -155,8 +166,26 @@ class Parkir extends CI_Controller {
     public function hitungtagihan($data)
 	{
         $query = $this->Parkir_Model->setkeluar($data);
-        $query = $this->Parkir_Model->hitungtagihan($data);
-        return $query;
+        $start = strtotime($query[0]->PARKIRBEGIN);
+        $end = strtotime($query[0]->PARKIREND);
+
+        $total_time = $end-$start;
+
+        $hours      = floor($total_time /3600);     
+        $minutes    = intval(($total_time/60) % 60);
+
+        $tagihan = ceil($total_time /3600) * 3000;
+        
+        $out['tagihan'] = $tagihan;
+        $out['hours']   = $hours;
+        $out['minutes'] = $minutes;
+        $out['idtag'] = $$query[0]->IDTAGIHAN;
+        
+        $store['idtag'] = $query[0]->IDTAGIHAN;
+        $store['biaya'] = $tagihan;
+        
+        $query = $this->Parkir_Model->savecost($store);
+        return $out;
 		
 	}
 }
