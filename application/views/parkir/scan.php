@@ -1,6 +1,6 @@
     <body>
         <div class="cont">
-            <img src="assets/images/nfc.png">
+            <img src="<?php echo base_url();?>assets/images/nfc.png">
             <a href="Parkir/pilih"><h1>Please scan your NFC card!</h1></a>
         </div>
         <script>

@@ -28,56 +28,63 @@ class Parkir extends CI_Controller {
 	public function index()
 	{
         if($this->ceklogin()) {
-            $data['title'] = ucfirst("Welcome");
-            $this->load->view('parkir/templates/header', $data);
-            $this->load->view('parkir/index');
-            $this->load->view('parkir/templates/footer');
+            $this->scan();
+        }
+		
+	}
+    
+    public function keluar()
+	{
+        if($this->ceklogout()) {
+            $this->scan();
         }
 		
 	}
 
-	public function login()
+	public function scan()
 	{
 		$data['title'] = ucfirst("Please Scan Your Card");
 		$this->load->view('parkir/templates/header', $data);
-        $this->load->view('parkir/login');
+        $this->load->view('parkir/scan');
         $this->load->view('parkir/templates/footer');
 	}
 
-	public function pilih()
+	public function pilih($user)
 	{
+        $vacant = $this->cekvacant();
+        $data = array(
+                'title'         => ucfirst("Please Choose Your Spot"),
+                'user'          => $user,
+                'vacant'        => $vacant
+         );
 		$data['title'] = ucfirst("Please Choose Your Spot");
 		$this->load->view('parkir/templates/header', $data);
         $this->load->view('parkir/parkiran');
 	}
-
-	public function silahkan()
+    
+    public function tagihan($user)
 	{
-		$data['title'] = ucfirst("Happy Parking");
-		$this->load->view('parkir/templates/header', $data);
-        $this->load->view('parkir/silahkan');
-        $this->load->view('parkir/templates/footer');
-	}
-
-	public function logout()
-	{
-		$data['title'] = ucfirst("Please Scan Your Card");
-		$this->load->view('parkir/templates/header', $data);
-        $this->load->view('parkir/logout');
-        $this->load->view('parkir/templates/footer');
-	}
-
-	public function tagihan()
-	{
+        $tagihan = $this->hitungtagihan($user);
+        
 		$data['title'] = ucfirst("Please Scan Your Card");
 		$this->load->view('parkir/templates/header', $data);
         $this->load->view('parkir/tagihan');
         $this->load->view('parkir/templates/footer');
 	}
 
+	public function silahkan()
+	{
+		$data['title'] = ucfirst("Happy Parking");
+        $data['ucapan'] = ucfirst("Silahkan :)");
+		$this->load->view('parkir/templates/header', $data);
+        $this->load->view('parkir/silahkan');
+        $this->load->view('parkir/templates/footer');
+	}
+
 	public function goodbye()
 	{
 		$data['title'] = ucfirst("Thank You. Goodbye");
+        $data['ucapan'] = ucfirst("Thank You :)");
 		$this->load->view('parkir/templates/header', $data);
         $this->load->view('parkir/goodbye');
         $this->load->view('parkir/templates/footer');
@@ -100,21 +107,13 @@ class Parkir extends CI_Controller {
     public function ceklogin()
 	{
         $query = $this->Parkir_Model->nfcshowlogin();
-//        var_dump($query);
-        
-        
-//        print_r($query);
-        
+
         $time = strtotime($query[0]->WAKTUMASUK);
         
-        $curtime = strtotime('-1 minutes');
+        $curtime = strtotime('-5 seconds');
 
-//        echo $time;
-//        echo "\n";
-//        echo $curtime;
-        
         if($time > $curtime) {     //1800 seconds
-            $this->pilih();
+            $this->pilih($query[0]->IDPENGGUNA);
         }
         else return true;
 	}
@@ -122,6 +121,42 @@ class Parkir extends CI_Controller {
     public function ceklogout()
 	{
         $query = $this->Parkir_Model->nfcshowlogout();
+		
+        $time = strtotime($query[0]->WAKTUKELUAR);
+        
+        $curtime = strtotime('-5 seconds');
+
+        if($time > $curtime) {     //1800 seconds
+            $this->tagihan($query[0]->IDPENGGUNA);
+        }
+        else return true;
+	}
+    
+    public function cekvacant()
+	{
+        $query = $this->Parkir_Model->cekvacant();
+        return $query;
+		
+	}
+    
+    public function bookspot()
+	{
+        $data = array(
+                'spot' => $this->input->post('spot'), 
+                'id' => $this->input->post('id')
+        );
+
+        $query = $this->Parkir_Model->bookspot($data);
+        $query = $this->Parkir_Model->vacantoff($data['spot']);
+        $query = $this->Parkir_Model->settagihan();
+        $this->silahkan();
+	}
+    
+    public function hitungtagihan($data)
+	{
+        $query = $this->Parkir_Model->setkeluar($data);
+        $query = $this->Parkir_Model->hitungtagihan($data);
+        return $query;
 		
 	}
 }
