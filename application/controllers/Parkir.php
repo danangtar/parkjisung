@@ -116,7 +116,15 @@ class Parkir extends CI_Controller {
 	{
 		$idnfc = $this->input->post('idnfc');
         $query = $this->Parkir_Model->nfclogout($idnfc);
-		
+	}
+    
+    public function nfcreg()
+	{
+        $data = array(
+                'idpeng' => $this->input->post('idpeng'), 
+                'idnfc' => $this->input->post('idnfc')
+        );
+        $query = $this->Parkir_Model->nfcreg($data);
 	}
     
     public function ceklogin()

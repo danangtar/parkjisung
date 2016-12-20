@@ -20,6 +20,15 @@ class Parkir_Model extends CI_Model {
         return $query->result();
 	}
     
+    public function nfcreg($data)
+	{
+        $this->db->reconnect();
+        $idpeng = $data['idpeng'];
+        $idnfc = $data['idnfc'];
+        $query = $this->db->query("CALL sp_nfcreg('$idpeng', '$idnfc')");
+        return $query->result();
+	}
+    
     public function nfcshowlogin()
 	{
         $this->db->reconnect();
