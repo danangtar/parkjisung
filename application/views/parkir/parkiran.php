@@ -1,14 +1,15 @@
     <body>
         <div class="wrapper">
             <div class="container">
-                <h1>Floor #1</h1>
-                <h1><?php echo $user;?></h1>
+                <h1>Park Ji Sung</h1>
+                <h1>Your ID: <?php echo $user;?></h1>
                 <p>Where do you want to park your car?</p>
                 <div id="seat-map">
                     <div class="front-indicator">Entrance/Exit</div>
                 </div>
                 <div class="booking-details">
                     <h2>Booking Details</h2>
+<!--
                     <h3> Floor Selection:</h3>
                     <select class="floor-select" onchange="location = this.value;">
                         <option value="parkiran.php">Floor #1</option>
@@ -16,6 +17,7 @@
                         <option value="parkiran.php">Floor #3</option>
                         <option value="parkiran.php">Floor #4</option>
                     </select> 
+-->
                     <h3> Selected Slot:</h3>
                     <ul id="selected-seats"></ul>
                     
@@ -72,7 +74,7 @@
                         if (this.status() == 'available' && counter == 0) {
                             //let's create a new <li> which we'll add to the cart items
 //                            $("<li>"+this.data().category+' #'+this.settings.label+' #'+this.settings.id+': <a href="#" class="cancel-cart-item">[cancel]</a></li>')
-                            $("<li>"+'<form action="<?php echo base_url();?>Parkir/bookspot" method="post">'+'<input type="hidden" name ="spot" value="'+this.settings.label+'">'+'<input type="hidden" name ="id" value="<?php echo $user;?>">'+'<button type="submit" class="checkout-button">Book Now &raquo;</button>'+"</form></li>")
+                            $("<li>"+this.data().category+' #'+this.settings.label+': <a href="#" class="cancel-cart-item">[cancel]</a>'+'<form action="<?php echo base_url();?>Parkir/bookspot" method="post">'+'<input type="hidden" name ="spot" value="'+this.settings.label+'">'+'<input type="hidden" name ="id" value="<?php echo $user;?>">'+'<button type="submit" class="checkout-button">Book Now &raquo;</button>'+"</form></li>")
                                 .attr('id', 'cart-item-'+this.settings.id)
                                 .data('seatId', this.settings.id)
                                 .appendTo($cart);
