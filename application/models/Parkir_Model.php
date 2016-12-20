@@ -84,4 +84,40 @@ class Parkir_Model extends CI_Model {
         $idtag = $data['idtag'];
         $query = $this->db->query("CALL sp_savecost('$biaya', '$idtag')");
 	}
+    
+    public function showcredit($data)
+	{
+        $this->db->reconnect();
+        $query = $this->db->query("CALL sp_showcredit('$data')");
+        return $query->result();
+	}
+    
+    public function jenispeng($data)
+	{
+        $this->db->reconnect();
+        $query = $this->db->query("CALL sp_jenispeng('$data')");
+        return $query->result();
+	}
+    
+    public function bayar($data)
+	{
+        $this->db->reconnect();
+        $idpeng = $data['idpeng'];
+        $idtag  = $data['idtag'];
+        $tagihan  = $data['tagihan'];
+        
+        $query = $this->db->query("CALL sp_bayar('$idpeng', '$idtag', '$tagihan')");
+        return $query->result();
+	}
+    
+    public function bayarlangganan($data)
+	{
+        $this->db->reconnect();
+        $idpeng = $data['idpeng'];
+        $idtag  = $data['idtag'];
+        $tagihan  = $data['tagihan'];
+        
+        $query = $this->db->query("CALL sp_bayarlangganan('$idpeng', '$idtag', '$tagihan')");
+        return $query->result();
+	}
 }

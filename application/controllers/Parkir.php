@@ -69,7 +69,9 @@ class Parkir extends CI_Controller {
         $biaya      = $tagihan['tagihan'];
         $hours      = $tagihan['hours'];
         $minutes    = $tagihan['minutes'];
-        $idtag      = $tagihan['idtag'];        
+        $idtag      = $tagihan['idtag'];
+        $saldo      = $tagihan['saldo'];
+        $jenispeng  = $tagihan['jenispeng'];
         
 		$data['title']      = ucfirst("Thank You");
         $data['tagihan']    = $biaya;
@@ -77,6 +79,8 @@ class Parkir extends CI_Controller {
         $data['minutes']    = $minutes;
         $data['idtag']      = $idtag;
         $data['idpeng']     = $user;
+        $data['saldo']      = $saldo;
+        $data['jenispeng']  = $jenispeng;
         
 		$this->load->view('parkir/templates/header', $data);
         $this->load->view('parkir/tagihan');
@@ -179,13 +183,46 @@ class Parkir extends CI_Controller {
         $out['tagihan'] = $tagihan;
         $out['hours']   = $hours;
         $out['minutes'] = $minutes;
-        $out['idtag'] = $$query[0]->IDTAGIHAN;
+        $out['idtag']   = $query[0]->IDTAGIHAN;
         
-        $store['idtag'] = $query[0]->IDTAGIHAN;
+        $query = $this->Parkir_Model->showcredit($data);
+        $out['saldo']   = $query[0]->BANYAKSALDO;
+        
+        $query = $this->Parkir_Model->jenispeng($data);
+        $out['jenispeng']   = $query[0]->JENISPENGGUNA;
+        
+        $store['idtag'] = $out['idtag'];
         $store['biaya'] = $tagihan;
         
         $query = $this->Parkir_Model->savecost($store);
-        return $out;
-		
+        return $out;	
+	}
+    
+    public function bayar()
+	{
+        $data = array(
+            'idpeng'         => $this->input->post('idpeng'),
+            'idtag'          => $this->input->post('idtag'),
+            'tagihan'        => $this->input->post('tagihan')
+         );
+        
+        $query = $this->Parkir_Model->bayar($data);
+        $numspot = $query[0]->NOMORSPOT;
+        $query = $this->Parkir_Model->vacanton($numspot);
+        $this->goodbye();
+	}
+    
+    public function langganan()
+	{
+        $data = array(
+            'idpeng'         => $this->input->post('idpeng'),
+            'idtag'          => $this->input->post('idtag'),
+            'tagihan'        => $this->input->post('tagihan')
+         );
+        
+        $query = $this->Parkir_Model->bayarlangganan($data);
+        $numspot = $query[0]->NOMORSPOT;
+        $query = $this->Parkir_Model->vacanton($numspot);
+        $this->goodbye();
 	}
 }
